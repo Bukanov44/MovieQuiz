@@ -12,6 +12,8 @@ final class MovieQuizViewController: UIViewController {
     @IBOutlet private var counterLabel: UILabel!
     @IBOutlet private var imageView: UIImageView!
     @IBOutlet private var textView: UILabel!
+    @IBOutlet private var noUIButton: UIButton!
+    @IBOutlet private var yesUIButton: UIButton!
 
     private struct QuizQuestion {
         let image: String
@@ -77,14 +79,17 @@ final class MovieQuizViewController: UIViewController {
                     correctAnswer: false)
     ]
 
-    @IBAction func yesButtonClicked(_ sender: UIButton) {
+    @IBAction private func yesButtonClicked(_ sender: UIButton) {
         let currentQuestion = questions[currentQuestionIndex]
         let givenAnswer = true
+        disAbleButtons()
         showAnswerResult(isCorrect: givenAnswer == currentQuestion.correctAnswer)
     }
-    @IBAction func noButtonClicked(_ sender: UIButton) {
+
+    @IBAction private func noButtonClicked(_ sender: UIButton) {
         let currentQuestion = questions[currentQuestionIndex]
         let givenAnswer = false
+        disAbleButtons()
         showAnswerResult(isCorrect: givenAnswer == currentQuestion.correctAnswer)
     }
 
@@ -96,11 +101,22 @@ final class MovieQuizViewController: UIViewController {
         return questionStep
     }
 
+    private func enableButtons() {
+            noUIButton.isEnabled = true
+            yesUIButton.isEnabled = true
+        }
+
+    private func disAbleButtons() {
+        noUIButton.isEnabled = false
+        yesUIButton.isEnabled = false
+    }
+
     private func show(quiz step: QuizStepViewModel) {
         counterLabel.text = step.questionNumber
         textView.text = step.question
         imageView.image = step.image
         imageView.layer.borderWidth = 0
+        enableButtons()
     }
 
     private func show(quiz result: QuizResultsViewModel) {
@@ -138,8 +154,8 @@ final class MovieQuizViewController: UIViewController {
 
     private func showNextQuestionOrResults() {
         if currentQuestionIndex == questions.count - 1 {
-            let text = "Ваш результат: \(correctAnswers)/10" // 1
-            let viewModel = QuizResultsViewModel( // 2
+            let text = "Ваш результат: \(correctAnswers)/10"
+            let viewModel = QuizResultsViewModel(
                 title: "Этот раунд окончен!",
                 text: text,
                 buttonText: "Сыграть ещё раз")
